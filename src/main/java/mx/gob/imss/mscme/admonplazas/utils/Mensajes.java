@@ -1,0 +1,111 @@
+package mx.gob.imss.mscme.admonplazas.utils;
+
+public enum Mensajes {
+    MSG001("Por favor, completa todos los campos obligatorios."),
+    MSG002("El correo contiene caracteres no permitidos."),
+    MSG003("Correo electrónico no válido, por favor verifícalo."),
+    MSG004("El correo electrónico no está registrado. Verifica tu información o regístrate."),
+    MSG005("Contraseña incorrecta, Intenta nuevamente."), MSG006("Correo electrónico no valido, por favor Verifícalo"),
+    MSG007("Las contraseñas no coinciden por favor verifica tu información"),
+    MSG008("Usted es titular de una plaza, por lo que no es posible realizar su registro."),
+    MSG009("Usted tiene un registro vigente como médico. Preséntese a su OOAD para validar su situación laboral"),
+    MSG010("La información ingresada es incorrecta. Por favor, verifica tu matrícula o CURP."),
+    MSG011("Ya existe una cuenta registrada con este correo electrónico. Si olvidaste tu contraseña, utiliza la opción 'Olvidé mi contraseña'."),
+    MSG012("Tu registro fue finalizado con éxito, se te enviará un correo con la información de tu registro."),
+    MSG013("Por favor completa todos los campos obligatorios."),
+    MSG014("La CURP ingresada es incorrecta, por favor verifica tu información."),
+    MSG015("La información ingresada es incorrecta. Por favor, verifica tu CURP."),
+    MSG016("¿Está seguro de que desea cambiar su contraseña?"),
+    MSG017("Se ha enviado a su cuenta de correo la información para poder ingresar"),
+    MSG018("No se encontró ningún registro con los datos proporcionados."),
+    MSG019("El formato del correo electrónico no es válido."), MSG020(" Por favor, completa todos los campos."),
+    MSG021("El correo electrónico no está registrado. Verifica tu información o regístrate."),
+    MSG022("La contraseña es incorrecta. Intenta nuevamente o restablece tu contraseña."),
+    MSG023("Por favor, ingresa la información en los campos faltantes"), MSG024("Datos guardados correctamente"),
+    MSG025("Por favor, ingresa la información en los campos faltantes"), MSG026("Datos guardados correctamente."),
+    MSG027("Por favor, ingresa la información en los campos faltantes"), MSG028("Datos guardados correctamente."),
+    MSG029("Por favor, ingresa la información en los campos faltantes"), MSG030("Datos guardados correctamente."),
+    MSG031("Por favor, seleccione tres OOAD y asegúrese de seleccionar tres zonas distintas"),
+    MSG032("Datos guardados correctamente."), MSG033("No se puede tomar la fotografía"),
+    MSG034("La imagen seleccionada no cumple con las características requerida."),
+    MSG035("Datos guardados correctamente."), MSG036("Datos guardados correctamente."),
+    MSG037("La información está incompleta, favor de verificar"),
+    MSG038("¡Registro exitoso! Te hemos enviado un correo con los detalles. No olvides revisarlo."),
+    MSG039("¡Registro exitoso! Te hemos enviado un correo con los detalles. No olvides revisarlo."),
+    MSG040("No se encontraron vacantes con los criterios seleccionados"),
+    MSG041("Actualmente no hay plazas vacantes disponibles. Por favor, consulta más adelante."),
+    MSG042("¿Está seguro de cambiar el estatus del médico a 'Cumple con Requisitos'?"),
+    MSG043("Médico no autorizado para la asignación de una plaza"),
+    MSG044("No se encontraron plazas disponibles con los criterios seleccionados."),
+    MSG045("Se realizó la asignación de la plaza exitosamente"),
+    MSG046("Se realizó la asignación de Sustituto exitosamente"),
+    MSG047("Se realizó la asignación de la plaza IMSS Bienestar exitosamente"),
+    MSG048("El médico ya tiene una plaza asignada."), MSG049("El médico ya tiene una asignación de sustitución."),
+    MSG050("El médico tiene un cambio de rama activo."), MSG051("El médico ha rechazado una oferta previamente."),
+    MSG052("No se puede asignar un cambio de rama. El médico ya tiene una plaza asignada."),
+    MSG053("No se puede asignar un cambio de rama. El médico ya tiene una asignación de sustitución "),
+    MSG054("El médico ya tiene un cambio de rama registrado. No se puede duplicar la acción"),
+    MSG055("El médico ha rechazado una oferta previamente. No se puede continuar con el proceso de cambio de rama"),
+    MSG056("Cambio de rama asignado exitosamente"),
+    MSG057("No se puede registrar un rechazo de oferta. El médico ya tiene una plaza asignada"),
+    MSG058("No se puede registrar un rechazo de oferta. El médico ya tiene una asignación de sustitución."),
+    MSG059("El médico ya tiene un cambio de rama registrado. No se puede registrar un rechazo adicional."),
+    MSG060("El médico ya ha rechazado una oferta previamente. No se puede duplicar la acción."),
+    MSG061("Rechazo de oferta registrado exitosamente"),
+    MSG062("Tu contraseña ha sido actualizada correctamente, te hemos enviado un correo con los detalles del cambio de contraseña. Por seguridad, no compartas tu contraseña con nadie."),
+    MSG063("El enlace ha expirado o no es válido. Por favor, solicita un nuevo cambio de contraseña."),
+    MSG064("Usted es titular de una plaza por lo que no podrá registrarse"),
+
+    MSG_CORREO_VACIO("El correo no puede estar vacío."), MSG_CONTRASENA_VACIA("La contraseña no puede estar vacía."),
+    MSG_CONTRASENA_MAYUSCULA("La contraseña debe contener al menos una letra mayúscula."),
+    MSG_CONTRASENA_MINUSCULA("La contraseña debe contener al menos una letra minúscula."),
+    MSG_CONTRASENA_NUMERO("La contraseña debe contener al menos un número."),
+    MSG_CONTRASENA_LONGITUD("La contraseña debe tener entre 8 y 12 caracteres."),
+    MSG_CONTRASENA_CARACTER("La contraseña debe contener al menos un carácter especial."),
+    MSG_VALIDACION_NOMBRE_APELLIDOS(
+            "Nombre y apellidos solo pueden contener letras, espacios, acentos y 'ñ', con un máximo de 40 caracteres."),
+    MSG_VALIDACION_CURP("El formato de la CURP es inválido."), MSG_VALIDACION_RFC("El formato del RFC es inválido."),
+    MSG_VALIDACION_SUBPERFIL_DOCUMENTO("Subperfil y Documento de verificación son obligatorios."),
+    MSG_VALIDACION_EMPLEO_EXTERNO("Solo los médicos externos pueden capturar esta información"),
+    MSG_VALIDACION_ESPECIFICACION_INSTITUCION("Especifique la institución"),
+    MSG_VALIDACION_TELEFONO("El número de teléfono debe tener exactamente 10 caracteres"),
+    MSG_VALIDACION_TELEFONO_VALIDO("El número de teléfono solo puede contener dígitos."),
+    MSG_VALIDACION_PERFIL_INVALIDO_CONSTANCIAS("El perfil no puede cargar constancias."),
+    /* MENSAJES EXITO */
+    MSG_AUTENTICACION_EXITOSA("Autenticación exitosa"),
+
+    /* ERRORES */
+    MSG_ERROR_REGISTRO_USUARIO("Error al registrar el usuario: "),
+    MSG_DOCUMENTO_VERIFICACION_INVALIDO("Documento de verificación no válido."),
+    MSG_SUBPERFIL_INVALIDO("Subperfil no válido."), MSG_PERFIL_INVALIDO("Perfil médico no válido."),
+    MSG_PAIS_EMISION_INVALIDO("País de emisión no válido."), MSG_ERROR_ENVIO_CORREO("No se pudo enviar el correo. "),
+    MSG_ERROR_TOKEN_INEXISTENTE("Token inexistente."), MSG_ERROR_TOKEN_EXPIRADO("El Token ha expirado."),
+    MSG_ERROR_TOKEN_UTILIZADO("El Token ya fue utilizado."),
+    MSG_ERROR_TOKEN_USUARIO("Token no corresponde al usuario."),
+    MSG_CONFIGURACION_AGREGADA("Se guardo la configuración correctamente."), MSG_EXITO("Éxito"),
+    MSG_ELIMINADO("Registro eliminado exitosamente"),
+    MSG_NO_USUARIOS_DISPONIBLES("No hay usuarios disponibles para asignacion en  la convocatoria"),
+    MSG_ERROR_BUSQUEDA_MATRICULAFOLIO("No se encontró matrícula/folio"),
+    MSG_ERROR_BUSQUEDA_MATRICULAFOLIO_ESTATUS("El médico aspirante no cumple con los requisitos"),
+    MSG_MESA_DETALLE_EXISTENTE("La mesa ya tiene un detalle asignado con el mismo número de mesa"),
+    MSG_CARGA_EN_PROGRESO("La convocatoria cuenta con una asignacion de citas medicas en proceso"),
+    MSG_INTERRUPCIONCITAS("Se interrumpió la asignación de citas medicas"),
+    MSG_INICIAPROCESOCITAS("Inicia proceso de citas"),
+    MSG_ERROR_NUMERO_MEDICOS(
+            "El número de médicos registrados que cumplen con los requisitos es superior al número de médicos definido en la configuración."),
+    MSG_CONFIGURACION_EXISTENTE("La convocatoria ya tiene una configuración"),
+    MSG_CONFIGURACION_MESA("No se han configurado en su totalidad, las especialidades en las mesas"),
+    MSG_NO_HAY_MEDICOS_DISPONIBLES("No hay medicos disponibles para la especialidad seleccionada"),
+    MSG_ERROR_BUSQUEDA_MATRICULAFOLIO_ESTATUS_PENDIENTE("EL médico no cuenta con una verificación documental por el área médica"),
+    ;
+
+    private final String mensaje;
+
+    Mensajes(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public String getMensaje() {
+        return this.mensaje;
+    }
+}
