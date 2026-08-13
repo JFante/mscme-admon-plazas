@@ -35,7 +35,7 @@ COPY --from=build /app/target/*.jar app.jar
 # Variables de entorno para Java
 ENV JAVA_OPTS="--enable-preview --add-opens java.base/java.lang=ALL-UNNAMED -Dspring.profiles.active=prod"
 
-EXPOSE 8089
+EXPOSE 8099
 
 # Salud check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
