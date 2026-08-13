@@ -11,7 +11,7 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
-import mx.gob.imss.mscme.admonplazas.models.response.plaza.DetallePlazaDTO;
+import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 @Mapper(
 	    componentModel = MappingConstants.ComponentModel.SPRING,
 	    unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -53,7 +53,10 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "creditoHipotecario", source = "refCredHipotecarioImporte"),
 	        @Mapping(target = "descuentoQuincenalCreditoHipotecario", source = "refCredHipotecarioQuincenal"),
 	        @Mapping(target = "creditoAutomotriz", source = "refCredAutomotrizImporte"),
-	        @Mapping(target = "descuentoQuincenalCreditoAutomotriz", source = "refCredAutomotrizQuincenal")
+	        @Mapping(target = "descuentoQuincenalCreditoAutomotriz", source = "refCredAutomotrizQuincenal"),
+
+	        @Mapping(target = "idEstatusPlaza", source = "estatusPlaza.idEstatusPlaza"),
+	        @Mapping(target = "estatusPlaza", source = "estatusPlaza.desEstatusPlaza")
 	    })
 	    DetallePlazaDTO toDetallePlazaDTO(PlazaLayout entity);
 

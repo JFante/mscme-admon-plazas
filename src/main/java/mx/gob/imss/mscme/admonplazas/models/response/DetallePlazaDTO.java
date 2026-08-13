@@ -1,4 +1,4 @@
-package mx.gob.imss.mscme.admonplazas.models.response.plaza;
+package mx.gob.imss.mscme.admonplazas.models.response;
 
 import lombok.Data;
 
@@ -45,4 +45,6 @@ public class DetallePlazaDTO {
 
     private Boolean esFavorita;
     private Integer cveZona;
+    private Long idEstatusPlaza;
+    private String estatusPlaza;
 }
