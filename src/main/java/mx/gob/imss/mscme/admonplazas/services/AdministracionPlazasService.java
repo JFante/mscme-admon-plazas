@@ -14,4 +14,6 @@ public interface AdministracionPlazasService {
 
 	RespuestaGenerica<Void> eliminarPlaza(Long idPlaza, String token);
 
+	RespuestaGenerica<Void> actualizarEstatusPlaza(Long idPlaza, Long idEstatus);
+
 }

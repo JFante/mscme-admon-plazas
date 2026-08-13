@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,6 +70,17 @@ public class AdministracionPlazaController {
             @RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(7);
         return ResponseEntity.ok(administracionPlazasService.eliminarPlaza(idPlaza, token));
+    }
+
+    @Operation(summary = "Actualización de estatus de plaza", description = "Actualiza el estatus de una plaza del layout a partir de su identificador (idPlaza) y el identificador del nuevo estatus (idEstatus).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Actualización realizada correctamente"),
+            @ApiResponse(responseCode = "500", description = "No se encontró la plaza con el id proporcionado") })
+    @PutMapping("/actualizarEstatusPlaza")
+    public ResponseEntity<RespuestaGenerica<Void>> actualizarEstatusPlaza(
+            @Parameter(description = "Id de la plaza") @RequestParam Long idPlaza,
+            @Parameter(description = "Id del estatus") @RequestParam Long idEstatus) {
+        return ResponseEntity.ok(administracionPlazasService.actualizarEstatusPlaza(idPlaza, idEstatus));
     }
 
 }

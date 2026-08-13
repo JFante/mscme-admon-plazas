@@ -84,6 +84,7 @@ public enum Mensajes {
     MSG_ERROR_TOKEN_USUARIO("Token no corresponde al usuario."),
     MSG_CONFIGURACION_AGREGADA("Se guardo la configuración correctamente."), MSG_EXITO("Éxito"),
     MSG_ELIMINADO("Registro eliminado exitosamente"),
+    MSG_ACTUALIZADO("Registro actualizado exitosamente"),
     MSG_NO_USUARIOS_DISPONIBLES("No hay usuarios disponibles para asignacion en  la convocatoria"),
     MSG_ERROR_BUSQUEDA_MATRICULAFOLIO("No se encontró matrícula/folio"),
     MSG_ERROR_BUSQUEDA_MATRICULAFOLIO_ESTATUS("El médico aspirante no cumple con los requisitos"),

@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import mx.gob.imss.mscme.admonplazas.mappers.PlazaLayoutMapper;
+import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
+import mx.gob.imss.mscme.admonplazas.repository.EstatusPlazaRepository;
 import mx.gob.imss.mscme.admonplazas.repository.PlazaLayoutRepository;
 import mx.gob.imss.mscme.admonplazas.repository.specification.PlazaLayoutSpecification;
 import mx.gob.imss.mscme.admonplazas.services.AdministracionPlazasService;
@@ -26,6 +28,7 @@ import mx.gob.imss.mscme.admonplazas.utils.Mensajes;
 public class AdministracionPlazasServiceImpl implements AdministracionPlazasService {
 
 	private final PlazaLayoutRepository plazaLayoutRepository;
+	private final EstatusPlazaRepository estatusPlazaRepository;
 	private final PlazaLayoutSpecification plazaLayoutSpecification;
 	private final PlazaLayoutMapper plazaLayoutMapper;
 	private final UsuarioService usuarioService;
@@ -59,6 +62,20 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		plazaLayoutRepository.save(plazaLayout);
 
 		return new RespuestaGenerica<>(true, Mensajes.MSG_ELIMINADO.getMensaje(), null);
+	}
+
+	@Override
+	public RespuestaGenerica<Void> actualizarEstatusPlaza(Long idPlaza, Long idEstatus) {
+		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
+				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
+
+		EstatusPlaza estatusPlaza = estatusPlazaRepository.findById(idEstatus)
+				.orElseThrow(() -> new IllegalStateException("No se encontró el estatus con id " + idEstatus));
+		plazaLayout.setEstatusPlaza(estatusPlaza);
+
+		plazaLayoutRepository.save(plazaLayout);
+
+		return new RespuestaGenerica<>(true, Mensajes.MSG_ACTUALIZADO.getMensaje(), null);
 	}
 
 }
