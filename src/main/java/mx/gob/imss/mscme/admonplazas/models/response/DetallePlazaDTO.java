@@ -47,4 +47,7 @@ public class DetallePlazaDTO {
     private Integer cveZona;
     private Long idEstatusPlaza;
     private String estatusPlaza;
+    private Long idConvocatoria;
+    private String origenPlaza;
+    private String observaciones;
 }

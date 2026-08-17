@@ -19,6 +19,11 @@ import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 public class PlazaLayoutSpecification {
 
 	public Specification<PlazaLayout> generarSpecificationCveOoadNumPlaza(Long cveOoad, Integer numPlaza) {
+		return generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, null);
+	}
+
+	public Specification<PlazaLayout> generarSpecificationCveOoadNumPlazaOrigen(Long cveOoad, Integer numPlaza,
+			String origenPlaza) {
 
 		return (root, query, cb) -> {
 
@@ -30,6 +35,10 @@ public class PlazaLayoutSpecification {
 
 			if (numPlaza != null) {
 				predicates.add(cb.equal(root.get("numPlaza"), numPlaza));
+			}
+
+			if (origenPlaza != null && !origenPlaza.isBlank()) {
+				predicates.add(cb.equal(cb.upper(root.get("origenPlaza")), origenPlaza.trim().toUpperCase()));
 			}
 
 			predicates.add(cb.equal(root.get("indActivo"), 1));

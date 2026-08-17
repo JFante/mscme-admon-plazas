@@ -39,6 +39,6 @@ EXPOSE 8099
 
 # Salud check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8099/actuator/health || exit 1
+    CMD curl -f http://localhost:8099/mscme-admon-plazas/actuator/health || exit 1
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

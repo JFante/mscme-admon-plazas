@@ -56,7 +56,10 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "descuentoQuincenalCreditoAutomotriz", source = "refCredAutomotrizQuincenal"),
 
 	        @Mapping(target = "idEstatusPlaza", source = "estatusPlaza.idEstatusPlaza"),
-	        @Mapping(target = "estatusPlaza", source = "estatusPlaza.desEstatusPlaza")
+	        @Mapping(target = "estatusPlaza", source = "estatusPlaza.desEstatusPlaza"),
+	        @Mapping(target = "idConvocatoria", source = "idConvocatoria"),
+	        @Mapping(target = "origenPlaza", source = "origenPlaza"),
+	        @Mapping(target = "observaciones", source = "desObservaciones")
 	    })
 	    DetallePlazaDTO toDetallePlazaDTO(PlazaLayout entity);
 

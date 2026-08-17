@@ -7,5 +7,10 @@ import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 
 public interface PlazaLayoutRepository extends JpaRepository<PlazaLayout, Long>, JpaSpecificationExecutor<PlazaLayout> {
 
+	long countByIdConvocatoriaAndEstatusPlaza_IdEstatusPlazaAndIndActivo(Long idConvocatoria, Long idEstatusPlaza,
+			Long indActivo);
+
+	boolean existsByIdConvocatoriaAndCveOoadAndNumPlazaAndIndActivo(Long idConvocatoria, Long cveOoad,
+			Integer numPlaza, Long indActivo);
 
 }

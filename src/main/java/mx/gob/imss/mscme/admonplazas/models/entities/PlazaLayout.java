@@ -157,6 +157,12 @@ public class PlazaLayout extends AuditoriaBase implements Serializable {
     
     @Column(name = "ID_CONVOCATORIA")
     private Long idConvocatoria;
+
+    @Column(name = "ORIGEN_PLAZA", length = 20)
+    private String origenPlaza;
+
+    @Column(name = "DES_OBSERVACIONES", length = 500)
+    private String desObservaciones;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ESTATUS_PLAZA")
