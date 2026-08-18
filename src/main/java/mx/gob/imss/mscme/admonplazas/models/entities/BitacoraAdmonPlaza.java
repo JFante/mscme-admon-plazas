@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,11 +39,5 @@ public class BitacoraAdmonPlaza extends AuditoriaBase implements Serializable {
     @Column(name = "DES_OBSERVACIONES", length = 500)
     private String desObservaciones;
 
-    @Lob
-    @Column(name = "DES_VALOR_ANTERIOR")
-    private String desValorAnterior;
 
-    @Lob
-    @Column(name = "DES_VALOR_NUEVO")
-    private String desValorNuevo;
 }

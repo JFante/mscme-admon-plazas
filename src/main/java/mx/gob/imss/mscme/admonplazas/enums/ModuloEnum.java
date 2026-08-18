@@ -2,9 +2,9 @@ package mx.gob.imss.mscme.admonplazas.enums;
 
 public enum ModuloEnum {
 
-    REGISTRO(1L), CONVOCATORIA(2L),
-
-    ASIGNACION_DE_PLAZAS(51L),ASIGNACION_CITAS(35L);
+    REGISTRO(1L), 
+    CONVOCATORIA(2L),
+    ADMINISTRACION_DE_PLAZAS(11L);
 
     
 

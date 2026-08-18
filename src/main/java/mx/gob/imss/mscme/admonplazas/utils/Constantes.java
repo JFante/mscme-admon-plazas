@@ -17,4 +17,6 @@ public final class Constantes {
 	public static final String CV_ESPECIALIDAD_HEMATOLOGIA = "22";
 	public static final String CV_ESPECIALIDAD_PATOLOGIA_CLINICA = "A4";
 	public static final Long TIPO_MEDICO_EXTERNO = 3L;
+	public static final String EXTENSION_XLSX = ".xlsx";
+	public static final String EXTENSION_XLS = ".xls";
 }

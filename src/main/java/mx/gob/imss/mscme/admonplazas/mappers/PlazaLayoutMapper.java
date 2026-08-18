@@ -2,6 +2,7 @@
 package mx.gob.imss.mscme.admonplazas.mappers;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,6 +13,7 @@ import org.mapstruct.factory.Mappers;
 
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
+import mx.gob.imss.mscme.admonplazas.models.response.PlazaLayoutCargaDTO;
 @Mapper(
 	    componentModel = MappingConstants.ComponentModel.SPRING,
 	    unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -62,6 +64,10 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "observaciones", source = "desObservaciones")
 	    })
 	    DetallePlazaDTO toDetallePlazaDTO(PlazaLayout entity);
+
+	    PlazaLayoutCargaDTO toPlazaLayoutCargaDTO(PlazaLayout entity);
+
+	    List<PlazaLayoutCargaDTO> toPlazaLayoutCargaDTOList(List<PlazaLayout> entities);
 
 	    // =========================
 	    // Métodos auxiliares

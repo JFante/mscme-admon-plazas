@@ -12,10 +12,10 @@ import lombok.extern.log4j.Log4j2;
 import mx.gob.imss.mscme.admonplazas.enums.EstatusPlazaEnum;
 import mx.gob.imss.mscme.admonplazas.mappers.PlazaLayoutMapper;
 import mx.gob.imss.mscme.admonplazas.models.entities.BitacoraAdmonPlaza;
-import mx.gob.imss.mscme.admonplazas.models.request.PlazaRequest;
 import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
+import mx.gob.imss.mscme.admonplazas.models.request.PlazaRequest;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaValidacionResponse;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
@@ -51,8 +51,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,
 			String origenPlaza, Pageable pageable) {
 		Page<DetallePlazaDTO> resultado = plazaLayoutRepository
-				.findAll(plazaLayoutSpecification.generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, origenPlaza),
-						pageable)
+				.findAll(plazaLayoutSpecification.generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, origenPlaza),pageable)
 				.map(plazaLayoutMapper::toDetallePlazaDTO);
 		return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), resultado);
 	}
@@ -66,6 +65,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	}
 
 	@Override
+	@Transactional
 	public RespuestaGenerica<DetallePlazaDTO> crearPlaza(PlazaRequest plazaRequest, String token) {
 		validarDatosMinimos(plazaRequest);
 		validarEstatusAlta(plazaRequest.getIdEstatusPlaza());
@@ -91,6 +91,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	}
 
 	@Override
+	@Transactional
 	public RespuestaGenerica<DetallePlazaDTO> actualizarPlaza(Long idPlaza, PlazaRequest plazaRequest, String token) {
 		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
 				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
@@ -110,6 +111,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	}
 
 	@Override
+	@Transactional
 	public RespuestaGenerica<Void> eliminarPlaza(Long idPlaza, String token) {
 		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
 				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
@@ -206,8 +208,6 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		bitacora.setIdEstatusAnterior(idEstatusAnterior);
 		bitacora.setIdEstatusNuevo(idEstatusNuevo);
 		bitacora.setDesObservaciones(desObservaciones);
-		bitacora.setDesValorAnterior("ID_ESTATUS_PLAZA=" + idEstatusAnterior);
-		bitacora.setDesValorNuevo("ID_ESTATUS_PLAZA=" + idEstatusNuevo);
 		bitacora.setIndActivo(Constantes.ESTADO_ACTIVO);
 		bitacora.setIdUsuarioAlta(idUsuario);
 		bitacora.setStpAltaRegistro(fechaMovimiento);

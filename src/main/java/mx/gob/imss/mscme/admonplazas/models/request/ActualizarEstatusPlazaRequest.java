@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ActualizarEstatusPlazaRequest {
 
+    private Long idPlaza;
+
     private Long idEstatus;
 
     private String desObservaciones;

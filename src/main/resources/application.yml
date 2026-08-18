@@ -22,6 +22,11 @@ spring:
           time_zone: America/Mexico_City
 
 
+#logging:
+  #level:
+    #org.hibernate.SQL: DEBUG
+    #org.hibernate.orm.jdbc.bind: TRACE
+
 server:
   port: 8099
   servlet:
@@ -38,11 +43,6 @@ management:
     health:
       show-details: always
 
-email:
-  service:
-        api:
-          url: http://10.166.0.120:1051/mscme-envio-correo/api/notificarEmail
-
 api:
   header: CME-REGISTRO-API-KEY
   key: YjRkZjFhYmE5NTAzZTRmNmNiOTdhM2Q2YzVhM2Q0NTNjOGI3MDYxY2YwNDU4M2JkNzdiNDI3NGY2YWE5M2I5
@@ -53,9 +53,6 @@ application:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250655368566D5971
       expiration: 86400000
 
-reportes:
-  service:
-    api:
-      urlAsignacionPlazas: ${urlRepoteAsignacionPlazas:http://10.166.120:1055/mscme-reportes/api/pdfAsignacionPlaza}
+
 
 

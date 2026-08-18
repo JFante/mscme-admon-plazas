@@ -98,6 +98,12 @@ public enum Mensajes {
     MSG_CONFIGURACION_MESA("No se han configurado en su totalidad, las especialidades en las mesas"),
     MSG_NO_HAY_MEDICOS_DISPONIBLES("No hay medicos disponibles para la especialidad seleccionada"),
     MSG_ERROR_BUSQUEDA_MATRICULAFOLIO_ESTATUS_PENDIENTE("EL médico no cuenta con una verificación documental por el área médica"),
+    MSG_CONVOCATORIA_NO_ENCONTRADA("No se encontró la convocatoria con el id proporcionado"),
+    MSG_ARCHIVO_OBLIGATORIO("El archivo Excel es obligatorio."),
+    MSG_ARCHIVO_FORMATO_INVALIDO("El archivo debe tener formato Excel (.xls o .xlsx)."),
+    MSG_ARCHIVO_RECIBIDO("Archivo recibido correctamente, en espera de procesamiento."),
+    MSG_ESTATUS_CARGA_NO_ENCONTRADO("No se encontró el estatus de carga con el id proporcionado"),
+    MSG_CARGA_EN_PROCESO("Ya existe una carga en proceso para la convocatoria proporcionada, espere a que finalice antes de iniciar una nueva."),
     ;
 
     private final String mensaje;

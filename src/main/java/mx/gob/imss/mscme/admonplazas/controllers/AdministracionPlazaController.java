@@ -7,7 +7,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -107,13 +106,12 @@ public class AdministracionPlazaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Actualización realizada correctamente"),
             @ApiResponse(responseCode = "500", description = "No se encontró la plaza con el id proporcionado") })
-    @PatchMapping("/actualizarEstatusPlaza/{idPlaza}/estatus")
-    public ResponseEntity<RespuestaGenerica<Void>> actualizarEstatusPlazaPatch(
-            @Parameter(description = "Id de la plaza") @PathVariable Long idPlaza,
+    @PutMapping("/actualizarEstatusPlaza")
+    public ResponseEntity<RespuestaGenerica<Void>> actualizarEstatusPlaza(
             @RequestBody ActualizarEstatusPlazaRequest request,
             @RequestHeader("Authorization") String authorizationHeader) {
-        return ResponseEntity.ok(administracionPlazasService.actualizarEstatusPlaza(idPlaza, request.getIdEstatus(),
-                request.getDesObservaciones(), obtenerToken(authorizationHeader)));
+        return ResponseEntity.ok(administracionPlazasService.actualizarEstatusPlaza(request.getIdPlaza(),
+                request.getIdEstatus(), request.getDesObservaciones(), obtenerToken(authorizationHeader)));
     }
 
     @Operation(summary = "Validación de plazas ocupadas", description = "Valida por convocatoria si existen plazas activas en estatus Ocupada. Si existen, el frontend no debe permitir iniciar el proceso.")
