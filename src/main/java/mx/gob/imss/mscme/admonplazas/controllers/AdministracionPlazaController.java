@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import mx.gob.imss.mscme.admonplazas.models.request.ActualizarEstatusPlazaRequest;
 import mx.gob.imss.mscme.admonplazas.models.request.PlazaRequest;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
@@ -35,14 +36,10 @@ import mx.gob.imss.mscme.admonplazas.services.AdministracionPlazasService;
 @RestController
 @RequestMapping("/v1/administracionPlazas")
 @RequiredArgsConstructor
+@Log4j2
 public class AdministracionPlazaController {
 
 	private final AdministracionPlazasService administracionPlazasService;
-
-    @GetMapping("/prueba")
-    public String prueba() {
-        return "hola";
-    }
 
     @Operation(summary = "Busqueda de plazas por filtro", description = "Busqueda paginada de plazas del layout, filtrando de forma dinamica por clave de OOAD y/o numero de plaza; ambos filtros son opcionales.")
     @ApiResponses(value = {
@@ -81,13 +78,12 @@ public class AdministracionPlazaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plaza actualizada correctamente"),
             @ApiResponse(responseCode = "500", description = "No se encontró la plaza con el id proporcionado") })
-    @PutMapping("/actualizarPlaza/{idPlaza}")
+    @PutMapping("/actualizarPlaza")
     public ResponseEntity<RespuestaGenerica<DetallePlazaDTO>> actualizarPlaza(
-            @Parameter(description = "Id de la plaza") @PathVariable Long idPlaza,
             @RequestBody PlazaRequest plazaRequest,
             @RequestHeader("Authorization") String authorizationHeader) {
         return ResponseEntity.ok(
-                administracionPlazasService.actualizarPlaza(idPlaza, plazaRequest, obtenerToken(authorizationHeader)));
+                administracionPlazasService.actualizarPlaza(plazaRequest, obtenerToken(authorizationHeader)));
     }
 
     @Operation(summary = "Baja lógica de plaza", description = "Realiza la baja lógica de una plaza del layout a partir de su identificador (idPlaza).")
@@ -110,6 +106,7 @@ public class AdministracionPlazaController {
     public ResponseEntity<RespuestaGenerica<Void>> actualizarEstatusPlaza(
             @RequestBody ActualizarEstatusPlazaRequest request,
             @RequestHeader("Authorization") String authorizationHeader) {
+    	log.info("actualizarEstatusPlaza {} ", request);
         return ResponseEntity.ok(administracionPlazasService.actualizarEstatusPlaza(request.getIdPlaza(),
                 request.getIdEstatus(), request.getDesObservaciones(), obtenerToken(authorizationHeader)));
     }

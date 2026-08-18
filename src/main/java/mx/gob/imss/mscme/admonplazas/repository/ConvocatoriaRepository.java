@@ -1,5 +1,6 @@
 package mx.gob.imss.mscme.admonplazas.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import mx.gob.imss.mscme.admonplazas.models.dto.LabelValueDto;
 import mx.gob.imss.mscme.admonplazas.models.entities.Convocatoria;
+import mx.gob.imss.mscme.admonplazas.utils.Constantes;
 
 public interface ConvocatoriaRepository extends JpaRepository<Convocatoria, Long> {
 
@@ -34,5 +36,13 @@ public interface ConvocatoriaRepository extends JpaRepository<Convocatoria, Long
             and ID_CONVOCATORIA = :idConvocatoria
                                     """, nativeQuery = true)
     Integer validarConvocatoria(@Param("idConvocatoria") Long idConvocatoria);
+    
+	Optional<Convocatoria> findFirstByIndActivoAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqualOrderByFechaInicioDesc(Integer indActivo, LocalDate fechaInicio, LocalDate fechaFin);
+
+	default Optional<Convocatoria> findConvocatoriaActivaPorPeriodoActual() {
+		LocalDate fechaActual = LocalDate.now();
+		return findFirstByIndActivoAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqualOrderByFechaInicioDesc(
+				Constantes.ESTADO_ACTIVO_INTEGER, fechaActual, fechaActual);
+    }
 
 }

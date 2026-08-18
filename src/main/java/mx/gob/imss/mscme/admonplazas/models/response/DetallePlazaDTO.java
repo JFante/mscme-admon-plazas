@@ -17,27 +17,27 @@ public class DetallePlazaDTO {
     private String cveUnidad;
     private BigDecimal porcAltoCostoVida;
     private String especialidad;
-    private String categoria;
-    private String regimen;
-    private String turno;
-    private String tipoPlaza;
-    private String marcaOcupacion;
+    private String descCategoria;
+    private String descRegimen;
+    private String descTurno;
+    private String descTipoPlaza;
+    private String descMarcaOcupacion;
     private String umf;
-    private Integer nuevoHospital; // Mapeado de IND_NUEVO_HOSPITAL
+    private Integer indHospitalNuevo; // Mapeado de IND_NUEVO_HOSPITAL
     private String ubicacion;
-    private String zona;
+    private String descZona;
     private String direccion;
-    private BigDecimal sueldoMensualBruto;
-    private BigDecimal sueldoMensualNeto;
-    private String horario;
+    private BigDecimal refSueldoMensualBruto;
+    private BigDecimal refSueldoMensualNeto;
+    private String descHorario;
     private String numPlaza;
     private String clasificacion;
-    private String ooad;
+    private String descOoad;
     private Integer creditos;
     private BigDecimal bonoDificilCobertura; // Mapeado de REF_BONO_OFICIAL_COBERTURA
 
     // --- Campos de Crédito (derivados de las relaciones) ---
-    private boolean accesoCredito;
+    private boolean indAccesoCredito;
     private BigDecimal creditoAutomotriz;
     private BigDecimal descuentoQuincenalCreditoAutomotriz;
     private BigDecimal creditoHipotecario;
@@ -49,5 +49,5 @@ public class DetallePlazaDTO {
     private String estatusPlaza;
     private Long idConvocatoria;
     private String origenPlaza;
-    private String observaciones;
+    private String desObservaciones;
 }

@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import mx.gob.imss.mscme.admonplazas.enums.EstatusPlazaEnum;
 import mx.gob.imss.mscme.admonplazas.mappers.PlazaLayoutMapper;
 import mx.gob.imss.mscme.admonplazas.models.entities.BitacoraAdmonPlaza;
+import mx.gob.imss.mscme.admonplazas.models.entities.Convocatoria;
 import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
@@ -20,6 +21,7 @@ import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaValidacionResponse;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
 import mx.gob.imss.mscme.admonplazas.repository.BitacoraAdmonPlazaRepository;
+import mx.gob.imss.mscme.admonplazas.repository.ConvocatoriaRepository;
 import mx.gob.imss.mscme.admonplazas.repository.EstatusPlazaRepository;
 import mx.gob.imss.mscme.admonplazas.repository.PlazaLayoutRepository;
 import mx.gob.imss.mscme.admonplazas.repository.specification.PlazaLayoutSpecification;
@@ -41,17 +43,12 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	private final PlazaLayoutMapper plazaLayoutMapper;
 	private final UsuarioService usuarioService;
 	private final BitacoraAdmonPlazaRepository bitacoraAdmonPlazaRepository;
+	private final ConvocatoriaRepository convocatoriaRepository;
 
 	@Override
-	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza, Pageable pageable) {
-		return busquedaPlazasFiltro(cveOoad, numPlaza, null, pageable);
-	}
-
-	@Override
-	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,
-			String origenPlaza, Pageable pageable) {
+	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,String origenPlaza, Pageable pageable) {
 		Page<DetallePlazaDTO> resultado = plazaLayoutRepository
-				.findAll(plazaLayoutSpecification.generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, origenPlaza),pageable)
+				.findAll(plazaLayoutSpecification.generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, origenPlaza, null),pageable)
 				.map(plazaLayoutMapper::toDetallePlazaDTO);
 		return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), resultado);
 	}
@@ -67,18 +64,22 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	@Override
 	@Transactional
 	public RespuestaGenerica<DetallePlazaDTO> crearPlaza(PlazaRequest plazaRequest, String token) {
+		log.info("crearPlaza {}", plazaRequest);
 		validarDatosMinimos(plazaRequest);
 		validarEstatusAlta(plazaRequest.getIdEstatusPlaza());
 
-		if (plazaLayoutRepository.existsByIdConvocatoriaAndCveOoadAndNumPlazaAndIndActivo(
-				plazaRequest.getIdConvocatoria(), plazaRequest.getCveOoad(), plazaRequest.getNumPlaza(),
-				Constantes.ESTADO_ACTIVO)) {
+		Convocatoria convocatoriaActiva = convocatoriaRepository.findConvocatoriaActivaPorPeriodoActual().orElseThrow(() -> new IllegalStateException("No existe una convocatoria activa vigente."));
+		Long idConvocatoria = convocatoriaActiva.getIdConvocatoria();
+
+		if (plazaLayoutRepository.existsByIdConvocatoriaAndCveOoadAndNumPlazaAndIndActivo(idConvocatoria,
+				plazaRequest.getCveOoad(), plazaRequest.getNumPlaza(), Constantes.ESTADO_ACTIVO)) {
 			throw new IllegalArgumentException("La plaza ya existe, por favor verifica tu información.");
 		}
 
 		Usuario usuarioAdmon = usuarioService.obtenerUsuarioToken(token);
 		PlazaLayout plazaLayout = new PlazaLayout();
 		aplicarDatosPlaza(plazaLayout, plazaRequest);
+		plazaLayout.setIdConvocatoria(idConvocatoria);
 		plazaLayout.setOrigenPlaza(plazaRequest.getOrigenPlaza() != null && !plazaRequest.getOrigenPlaza().isBlank()
 				? plazaRequest.getOrigenPlaza().trim().toUpperCase()
 				: "MANUAL");
@@ -92,9 +93,13 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 
 	@Override
 	@Transactional
-	public RespuestaGenerica<DetallePlazaDTO> actualizarPlaza(Long idPlaza, PlazaRequest plazaRequest, String token) {
-		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
-				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
+	public RespuestaGenerica<DetallePlazaDTO> actualizarPlaza(PlazaRequest plazaRequest, String token) {
+		log.info("actualizarPlaza {}", plazaRequest);
+		Long idPlaza = plazaRequest.getIdPlaza();
+		if (idPlaza == null) {
+			throw new IllegalArgumentException("El idPlaza es requerido.");
+		}
+		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 
 		if (plazaRequest.getIdEstatusPlaza() != null) {
 			validarEstatusAlta(plazaRequest.getIdEstatusPlaza());
@@ -106,23 +111,19 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		plazaLayout.setStpModificaRegistro(LocalDateTime.now());
 
 		PlazaLayout actualizada = plazaLayoutRepository.save(plazaLayout);
-		return new RespuestaGenerica<>(true, Mensajes.MSG_ACTUALIZADO.getMensaje(),
-				plazaLayoutMapper.toDetallePlazaDTO(actualizada));
+		return new RespuestaGenerica<>(true, Mensajes.MSG_ACTUALIZADO.getMensaje(),plazaLayoutMapper.toDetallePlazaDTO(actualizada));
 	}
 
 	@Override
 	@Transactional
 	public RespuestaGenerica<Void> eliminarPlaza(Long idPlaza, String token) {
-		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
-				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
-
+		log.info("eliminarPlaza {}", idPlaza);
+		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 		Usuario usuarioAdmon = usuarioService.obtenerUsuarioToken(token);
-
 		plazaLayout.setIndActivo(Constantes.ESTADO_NO_ACTIVO);
 		plazaLayout.setIdUsuarioBaja(usuarioAdmon.getIdUsuario());
 		plazaLayout.setStpBajaRegistro(LocalDateTime.now());
 		plazaLayoutRepository.save(plazaLayout);
-
 		return new RespuestaGenerica<>(true, Mensajes.MSG_ELIMINADO.getMensaje(), null);
 	}
 
@@ -137,8 +138,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 				? plazaLayout.getEstatusPlaza().getIdEstatusPlaza()
 				: null;
 
-		EstatusPlaza estatusPlaza = estatusPlazaRepository.findById(idEstatus)
-				.orElseThrow(() -> new IllegalStateException("No se encontró el estatus con id " + idEstatus));
+		EstatusPlaza estatusPlaza = estatusPlazaRepository.findById(idEstatus).orElseThrow(() -> new IllegalStateException("No se encontró el estatus con id " + idEstatus));
 		Long idUsuario = null;
 		LocalDateTime ahora = LocalDateTime.now();
 
@@ -178,9 +178,8 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		if (plazaRequest == null) {
 			throw new IllegalArgumentException("La información de la plaza es obligatoria.");
 		}
-		if (plazaRequest.getIdConvocatoria() == null || plazaRequest.getCveOoad() == null
-				|| plazaRequest.getNumPlaza() == null || plazaRequest.getIdEstatusPlaza() == null) {
-			throw new IllegalArgumentException("idConvocatoria, cveOoad, numPlaza e idEstatusPlaza son obligatorios.");
+		if (plazaRequest.getCveOoad() == null || plazaRequest.getNumPlaza() == null || plazaRequest.getIdEstatusPlaza() == null) {
+			throw new IllegalArgumentException("cveOoad, numPlaza e idEstatusPlaza son obligatorios.");
 		}
 	}
 
@@ -239,7 +238,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		plazaLayout.setDescTipoPlaza(request.getDescTipoPlaza());
 		plazaLayout.setCveMarcaOcupacion(request.getCveMarcaOcupacion());
 		plazaLayout.setDescMarcaOcupacion(request.getDescMarcaOcupacion());
-		plazaLayout.setDesRegimen(request.getDesRegimen());
+		plazaLayout.setDesRegimen(request.getDescRegimen());
 		plazaLayout.setRefDireccionUnidad(request.getRefDireccionUnidad());
 		plazaLayout.setIndHospitalNuevo(request.getIndHospitalNuevo());
 		plazaLayout.setRefSueldoMensualBruto(request.getRefSueldoMensualBruto());

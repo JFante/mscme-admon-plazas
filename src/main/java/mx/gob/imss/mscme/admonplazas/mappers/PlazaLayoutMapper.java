@@ -29,29 +29,29 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "cveUnidad", source = "cveUnidad"),
 	        @Mapping(target = "porcAltoCostoVida", source = "refAltoCostoVida"),
 	        @Mapping(target = "especialidad", source = "descAreaResponsabilidad"),
-	        @Mapping(target = "categoria", source = "descCategoria"),
-	        @Mapping(target = "regimen", source = "desRegimen"),
-	        @Mapping(target = "turno", source = "descTurno"),
-	        @Mapping(target = "tipoPlaza", source = "descTipoPlaza"),
-	        @Mapping(target = "marcaOcupacion", source = "descMarcaOcupacion"),
+	        @Mapping(target = "descCategoria", source = "descCategoria"),
+	        @Mapping(target = "descRegimen", source = "desRegimen"),
+	        @Mapping(target = "descTurno", source = "descTurno"),
+	        @Mapping(target = "descTipoPlaza", source = "descTipoPlaza"),
+	        @Mapping(target = "descMarcaOcupacion", source = "descMarcaOcupacion"),
 	        @Mapping(target = "umf", source = "descUnidad"),
-	        @Mapping(target = "nuevoHospital", source = "indHospitalNuevo"),
+	        @Mapping(target = "indHospitalNuevo", source = "indHospitalNuevo"),
 	        @Mapping(target = "ubicacion", source = "descOoad"),
-	        @Mapping(target = "zona", source = "descZona"),
+	        @Mapping(target = "descZona", source = "descZona"),
 	        @Mapping(target = "direccion", source = "refDireccionUnidad"),
-	        @Mapping(target = "sueldoMensualBruto", source = "refSueldoMensualBruto"),
-	        @Mapping(target = "sueldoMensualNeto", source = "refSueldoMensualNeto"),
-	        @Mapping(target = "horario", source = "descHorario"),
+	        @Mapping(target = "refSueldoMensualBruto", source = "refSueldoMensualBruto"),
+	        @Mapping(target = "refSueldoMensualNeto", source = "refSueldoMensualNeto"),
+	        @Mapping(target = "descHorario", source = "descHorario"),
 	        @Mapping(target = "numPlaza", expression = "java(entity.getNumPlaza() != null ? entity.getNumPlaza().toString() : null)"),
 	        @Mapping(target = "clasificacion", source = "clasificacion"),
-	        @Mapping(target = "ooad", source = "descOoad"),
+	        @Mapping(target = "descOoad", source = "descOoad"),
 	        @Mapping(target = "cveZona", source = "cveZona"),
 
 	        // Créditos
 	        @Mapping(target = "creditos", expression = "java(contarCreditos(entity))"),
 
 	        @Mapping(target = "bonoDificilCobertura", source = "refBonoDificilCobertura"),
-	        @Mapping(target = "accesoCredito", expression = "java(entity.getIndAccesoCredito() != null && entity.getIndAccesoCredito().equals(1))"),
+	        @Mapping(target = "indAccesoCredito", expression = "java(entity.getIndAccesoCredito() != null && entity.getIndAccesoCredito().equals(1))"),
 	        @Mapping(target = "creditoHipotecario", source = "refCredHipotecarioImporte"),
 	        @Mapping(target = "descuentoQuincenalCreditoHipotecario", source = "refCredHipotecarioQuincenal"),
 	        @Mapping(target = "creditoAutomotriz", source = "refCredAutomotrizImporte"),
@@ -61,7 +61,7 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "estatusPlaza", source = "estatusPlaza.desEstatusPlaza"),
 	        @Mapping(target = "idConvocatoria", source = "idConvocatoria"),
 	        @Mapping(target = "origenPlaza", source = "origenPlaza"),
-	        @Mapping(target = "observaciones", source = "desObservaciones")
+	        @Mapping(target = "desObservaciones", source = "desObservaciones")
 	    })
 	    DetallePlazaDTO toDetallePlazaDTO(PlazaLayout entity);
 

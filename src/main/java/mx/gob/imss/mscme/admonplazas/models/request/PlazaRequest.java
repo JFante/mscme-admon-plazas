@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlazaRequest {
 
+    private Long idPlaza;
     private Integer numPlaza;
     private Long cveOoad;
     private String descOoad;
@@ -33,7 +34,7 @@ public class PlazaRequest {
     private String descTipoPlaza;
     private Integer cveMarcaOcupacion;
     private String descMarcaOcupacion;
-    private String desRegimen;
+    private String descRegimen;
     private String refDireccionUnidad;
     private Integer indHospitalNuevo;
     private BigDecimal refSueldoMensualBruto;
