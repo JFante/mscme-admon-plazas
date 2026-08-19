@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ import mx.gob.imss.mscme.admonplazas.enums.EstatusCargaEnum;
 import mx.gob.imss.mscme.admonplazas.enums.EstatusPlazaEnum;
 import mx.gob.imss.mscme.admonplazas.enums.ModuloEnum;
 import mx.gob.imss.mscme.admonplazas.enums.TipoMovimientoMovimientoEnum;
+import mx.gob.imss.mscme.admonplazas.mappers.ControlCargaPlazaMapper;
 import mx.gob.imss.mscme.admonplazas.mappers.PlazaLayoutMapper;
 import mx.gob.imss.mscme.admonplazas.models.entities.ControlCargaPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.Convocatoria;
@@ -31,6 +33,7 @@ import mx.gob.imss.mscme.admonplazas.models.entities.EstatusCarga;
 import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
+import mx.gob.imss.mscme.admonplazas.models.response.ControlCargaPlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaLayoutCargaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
 import mx.gob.imss.mscme.admonplazas.repository.ControlCargaPlazaRepository;
@@ -54,6 +57,7 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
     private final EstatusCargaRepository estatusCargaRepository;
     private final ConvocatoriaRepository convocatoriaRepository;
     private final PlazaLayoutMapper plazaLayoutMapper;
+    private final ControlCargaPlazaMapper controlCargaPlazaMapper;
     private final PlazaExcelUtilService plazaExcelUtilService;
     private final UsuarioService usuarioService;
     private final PlazaLayoutRepository plazaLayoutRepository;
@@ -100,8 +104,22 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
         return new RespuestaGenerica<>(true, Mensajes.MSG_ARCHIVO_RECIBIDO.getMensaje(), respuesta);
     }
 
+    @Override
+    public RespuestaGenerica<ControlCargaPlazaDTO> obtenerUltimaCargaPorConvocatoria(Long idConvocatoria) {
+        log.info("obtenerUltimaCargaPorConvocatoria {}", idConvocatoria);
+        List<ControlCargaPlaza> cargas = controlCargaPlazaRepository.findByIdConvocatoriaOrderByFechaDesc(idConvocatoria);
+
+        ControlCargaPlaza ultimaCarga = null;
+        if (!CollectionUtils.isEmpty(cargas)) {
+            ultimaCarga = cargas.getFirst();
+        }
+
+        ControlCargaPlazaDTO respuesta = controlCargaPlazaMapper.toControlCargaPlazaDTO(ultimaCarga);
+        return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), respuesta);
+    }
+
     /***
-     * 
+     *
      * @param convocatoria
      * @param archivo
      * @param fechaHoraInicioProceso

@@ -104,6 +104,7 @@ public enum Mensajes {
     MSG_ARCHIVO_RECIBIDO("Archivo recibido correctamente, en espera de procesamiento."),
     MSG_ESTATUS_CARGA_NO_ENCONTRADO("No se encontró el estatus de carga con el id proporcionado"),
     MSG_CARGA_EN_PROCESO("Ya existe una carga en proceso para la convocatoria proporcionada, espere a que finalice antes de iniciar una nueva."),
+    MSG_CONTROL_CARGA_NO_ENCONTRADO("No se encontró información de carga para la convocatoria proporcionada."),
     ;
 
     private final String mensaje;

@@ -3,6 +3,7 @@ package mx.gob.imss.mscme.admonplazas.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import mx.gob.imss.mscme.admonplazas.models.response.ControlCargaPlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaLayoutCargaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
 import mx.gob.imss.mscme.admonplazas.services.CargaLayoutPlazaService;
@@ -44,6 +46,16 @@ public class CargaLayoutPlazaController {
 		log.info("cargarLayoutPlaza");
 		String token = authorizationHeader.substring(7);
 		return ResponseEntity.ok(cargaLayoutPlazaService.cargarLayoutPlaza(idConvocatoria, archivo, token));
+	}
+
+	@Operation(summary = "Última carga de layout por convocatoria", description = "Obtiene el registro de control de la última carga de layout de plazas realizada para la convocatoria proporcionada.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Consulta realizada correctamente") })
+	@GetMapping(value = "/ultimaCarga")
+	public ResponseEntity<RespuestaGenerica<ControlCargaPlazaDTO>> obtenerUltimaCargaPorConvocatoria(
+			@Parameter(description = "Id de la convocatoria") @RequestParam Long idConvocatoria) {
+		log.info("obtenerUltimaCargaPorConvocatoria {}", idConvocatoria);
+		return ResponseEntity.ok(cargaLayoutPlazaService.obtenerUltimaCargaPorConvocatoria(idConvocatoria));
 	}
 
 }
