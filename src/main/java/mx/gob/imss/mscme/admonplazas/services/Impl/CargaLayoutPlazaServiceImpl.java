@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +29,6 @@ import mx.gob.imss.mscme.admonplazas.enums.TipoMovimientoMovimientoEnum;
 import mx.gob.imss.mscme.admonplazas.mappers.ControlCargaPlazaMapper;
 import mx.gob.imss.mscme.admonplazas.mappers.PlazaLayoutMapper;
 import mx.gob.imss.mscme.admonplazas.models.entities.ControlCargaPlaza;
-import mx.gob.imss.mscme.admonplazas.models.entities.Convocatoria;
-import mx.gob.imss.mscme.admonplazas.models.entities.EstatusCarga;
 import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
@@ -38,10 +37,10 @@ import mx.gob.imss.mscme.admonplazas.models.response.PlazaLayoutCargaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
 import mx.gob.imss.mscme.admonplazas.repository.ControlCargaPlazaRepository;
 import mx.gob.imss.mscme.admonplazas.repository.ConvocatoriaRepository;
-import mx.gob.imss.mscme.admonplazas.repository.EstatusCargaRepository;
 import mx.gob.imss.mscme.admonplazas.repository.PlazaLayoutRepository;
 import mx.gob.imss.mscme.admonplazas.services.BitacoraService;
 import mx.gob.imss.mscme.admonplazas.services.CargaLayoutPlazaService;
+import mx.gob.imss.mscme.admonplazas.services.ControlCargaPlazaService;
 import mx.gob.imss.mscme.admonplazas.services.PlazaExcelUtilService;
 import mx.gob.imss.mscme.admonplazas.services.UsuarioService;
 import mx.gob.imss.mscme.admonplazas.utils.ColumnasLayoutPlaza;
@@ -54,7 +53,6 @@ import mx.gob.imss.mscme.admonplazas.utils.Mensajes;
 public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
 
     private final ControlCargaPlazaRepository controlCargaPlazaRepository;
-    private final EstatusCargaRepository estatusCargaRepository;
     private final ConvocatoriaRepository convocatoriaRepository;
     private final PlazaLayoutMapper plazaLayoutMapper;
     private final ControlCargaPlazaMapper controlCargaPlazaMapper;
@@ -62,12 +60,15 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
     private final UsuarioService usuarioService;
     private final PlazaLayoutRepository plazaLayoutRepository;
     private final BitacoraService bitacoraService;
+    private final ControlCargaPlazaService controlCargaPlazaService;
 
     @Override
+    @Transactional
     public RespuestaGenerica<List<PlazaLayoutCargaDTO>> cargarLayoutPlaza(Long idConvocatoria, MultipartFile archivo,String token) {
         log.info("cargarLayoutPlaza {}", idConvocatoria);
+        List<PlazaLayout> plazasNuevas;
         var fechaHoraInicioProceso = LocalDateTime.now();
-        var convocatoriaActiva = convocatoriaRepository.findById(idConvocatoria).orElseThrow(() -> new IllegalStateException(Mensajes.MSG_CONVOCATORIA_NO_ENCONTRADA.getMensaje()));
+        var convocatoriaAsociar = convocatoriaRepository.findById(idConvocatoria).orElseThrow(() -> new IllegalStateException(Mensajes.MSG_CONVOCATORIA_NO_ENCONTRADA.getMensaje()));
         var usuarioAdministrador = usuarioService.obtenerUsuarioToken(token);
 
         if (archivo == null || archivo.isEmpty()) {
@@ -84,19 +85,27 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
             throw new IllegalStateException(Mensajes.MSG_CARGA_EN_PROCESO.getMensaje());
         }
         
-        ControlCargaPlaza controlCarga = this.guardarInicioControlCarga(convocatoriaActiva, archivo,fechaHoraInicioProceso, usuarioAdministrador);
-        List<PlazaLayout> plazasNuevas;
+        ControlCargaPlaza controlCarga = controlCargaPlazaService.guardarInicioControlCarga(convocatoriaAsociar, archivo,fechaHoraInicioProceso, usuarioAdministrador);
         try {
+        	//Al realizar la carga de plazas, si ya existen plazas cargadas estas seran eliminadas para cargar las nuevas plazas.
+        	//Si ya existen plazas asignadas, ya no es posible realizar la carga de plazas de esa convocatoria.
+
+        	var existenPlazasAsignadas = plazaLayoutRepository.existenPlazasAsignadas(idConvocatoria, EstatusPlazaEnum.OCUPADA.getId());
+        	if(existenPlazasAsignadas) {
+        		throw new IllegalStateException(Mensajes.MSG_PLAZAS_OCUPADAS.getMensaje());
+        	}
+
         	plazasNuevas = this.generarPlazasEntidades(archivo, idConvocatoria, usuarioAdministrador);
+        	plazaLayoutRepository.borrarFisicamentePlazasPorConvocatoria(idConvocatoria);
         	plazasNuevas = plazaLayoutRepository.saveAll(plazasNuevas);
         } catch (RuntimeException ex) {
-            this.guardarFinControlCarga(controlCarga,EstatusCargaEnum.INTERRUMPIDO, List.of(), ex.getMessage(), usuarioAdministrador);
+        	controlCargaPlazaService.guardarFinControlCarga(controlCarga, EstatusCargaEnum.INTERRUMPIDO, List.of(), ex.getMessage(), usuarioAdministrador);
             throw ex;
         }
 
         List<PlazaLayoutCargaDTO> respuesta = plazaLayoutMapper.toPlazaLayoutCargaDTOList(plazasNuevas);
         //se guarda el fin del proceso
-        this.guardarFinControlCarga(controlCarga, EstatusCargaEnum.FINALIZADO, plazasNuevas,Mensajes.MSG_ARCHIVO_RECIBIDO.getMensaje(), usuarioAdministrador);
+        controlCargaPlazaService.guardarFinControlCarga(controlCarga, EstatusCargaEnum.FINALIZADO, plazasNuevas,Mensajes.MSG_ARCHIVO_RECIBIDO.getMensaje(), usuarioAdministrador);
 
         // guardado de bitacora general
 		this.bitacoraService.guardarBitacora(usuarioAdministrador, "Carga de layout de plaza",TipoMovimientoMovimientoEnum.CREACION.getId(), ModuloEnum.ADMINISTRACION_DE_PLAZAS.getId());
@@ -116,60 +125,6 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
 
         ControlCargaPlazaDTO respuesta = controlCargaPlazaMapper.toControlCargaPlazaDTO(ultimaCarga);
         return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), respuesta);
-    }
-
-    /***
-     *
-     * @param convocatoria
-     * @param archivo
-     * @param fechaHoraInicioProceso
-     * @param usuarioAdmon
-     * @return
-     */
-    private ControlCargaPlaza guardarInicioControlCarga(Convocatoria convocatoria, MultipartFile archivo, LocalDateTime fechaHoraInicioProceso, Usuario usuarioAdmon) {
-        EstatusCarga estatusCarga = obtenerEstatusCarga(EstatusCargaEnum.EN_PROCESO);
-        ControlCargaPlaza controlCarga = new ControlCargaPlaza();
-        controlCarga.setIdConvocatoria(convocatoria);
-        controlCarga.setIdEstatusCarga(estatusCarga);
-        controlCarga.setNomArchivo(StringUtils.getFilename(archivo.getOriginalFilename()));
-        controlCarga.setStpInicioCarga(fechaHoraInicioProceso);
-        controlCarga.setIndActivo(Constantes.ESTADO_ACTIVO);
-        controlCarga.setIdUsuarioAlta(usuarioAdmon.getIdUsuario());
-        controlCarga.setStpAltaRegistro(fechaHoraInicioProceso);
-        return controlCargaPlazaRepository.saveAndFlush(controlCarga);
-    }
-
-    /***
-     * 
-     * @param controlCarga
-     * @param estatusFinal
-     * @param plazas
-     * @param mensajeResultado
-     * @param usuarioAdmon
-     */
-    private void guardarFinControlCarga(ControlCargaPlaza controlCarga, EstatusCargaEnum estatusFinal,
-            List<PlazaLayout> plazas, String mensajeResultado, Usuario usuarioAdmon) {
-        long numPlazasConCredito = plazas.stream()
-                .filter(plaza -> Constantes.ESTADO_ACTIVO_INTEGER.equals(plaza.getIndAccesoCredito()))
-                .count();
-
-        LocalDateTime fechaHoraFinProceso = LocalDateTime.now();
-        controlCarga.setIdEstatusCarga(obtenerEstatusCarga(estatusFinal));
-        controlCarga.setNumTotalRegistros((long) plazas.size());
-        controlCarga.setNumRegistrosValidos((long) plazas.size());
-        controlCarga.setNumRegistrosRechazados(0L);
-        controlCarga.setNumPlazasOfertadas((long) plazas.size());
-        controlCarga.setNumPlazasConCredito(numPlazasConCredito);
-        controlCarga.setStpFinCarga(fechaHoraFinProceso);
-        controlCarga.setRefMensajeResultado(mensajeResultado);
-        controlCarga.setIdUsuarioModifica(usuarioAdmon.getIdUsuario());
-        controlCarga.setStpModificaRegistro(fechaHoraFinProceso);
-        controlCargaPlazaRepository.saveAndFlush(controlCarga);
-    }
-
-    private EstatusCarga obtenerEstatusCarga(EstatusCargaEnum estatusCargaEnum) {
-        return estatusCargaRepository.findById(estatusCargaEnum.getId())
-                .orElseThrow(() -> new IllegalStateException(Mensajes.MSG_ESTATUS_CARGA_NO_ENCONTRADO.getMensaje()));
     }
 
     /***
