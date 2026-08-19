@@ -167,10 +167,7 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
                 Workbook workbook = WorkbookFactory.create(inputStream)) {
 
             Sheet hoja = workbook.getSheetAt(0);
-            Row filaEncabezado = hoja.getRow(hoja.getFirstRowNum());
-            if (filaEncabezado == null) {
-                throw new IllegalArgumentException(Mensajes.MSG_ARCHIVO_FORMATO_INVALIDO.getMensaje());
-            }
+            Row filaEncabezado = this.encontrarFilaEncabezado(hoja);
 
             Map<Integer, String> encabezados = new HashMap<>();
             for (Cell celda : filaEncabezado) {
@@ -215,6 +212,30 @@ public class CargaLayoutPlazaServiceImpl implements CargaLayoutPlazaService {
             log.error("Error al leer el archivo Excel {}", ex.getMessage(), ex);
             throw new IllegalArgumentException("No fue posible leer el archivo Excel proporcionado.");
         }
+    }
+
+    /***
+     * Busca la fila que contiene los encabezados técnicos del layout (identificada por la
+     * columna NUM_PLAZA), ya que las plantillas pueden incluir filas previas de descripción o
+     * separación antes de dicha fila.
+     *
+     * @param hoja
+     * @return
+     */
+    private Row encontrarFilaEncabezado(Sheet hoja) {
+        for (int numFila = hoja.getFirstRowNum(); numFila <= hoja.getLastRowNum(); numFila++) {
+            Row fila = hoja.getRow(numFila);
+            if (fila == null) {
+                continue;
+            }
+            for (Cell celda : fila) {
+                String valor = plazaExcelUtilService.obtenerValorTexto(celda);
+                if (valor != null && ColumnasLayoutPlaza.NUM_PLAZA.equalsIgnoreCase(valor.trim())) {
+                    return fila;
+                }
+            }
+        }
+        throw new IllegalArgumentException(Mensajes.MSG_ARCHIVO_FORMATO_INVALIDO.getMensaje());
     }
 
 }

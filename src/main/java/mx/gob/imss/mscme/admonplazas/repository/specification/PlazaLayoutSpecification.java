@@ -18,7 +18,7 @@ import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 @Component
 public class PlazaLayoutSpecification {
 
-	public Specification<PlazaLayout> generarSpecificationCveOoadNumPlazaOrigen(Long cveOoad, Integer numPlaza,
+	public Specification<PlazaLayout> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,
 			String origenPlaza, Long idConvocatoria) {
 
 		return (root, query, cb) -> {

@@ -10,7 +10,7 @@ import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
 
 public interface AdministracionPlazasService {
 
-	RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza, String origenPlaza,Pageable pageable);
+	RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza, String origenPlaza, Long idConvocatoria, Pageable pageable);
 
 	RespuestaGenerica<DetallePlazaDTO> buscarDetallePlaza(Long idPlaza);
 

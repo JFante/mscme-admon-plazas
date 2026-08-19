@@ -27,7 +27,7 @@ public interface PlazaLayoutMapper {
 	        @Mapping(target = "cveOoad", expression = "java(formatIntegerToTwoDigits(entity.getCveOoad()))"),
 	        @Mapping(target = "cvePuesto", source = "cvePuesto"),
 	        @Mapping(target = "cveUnidad", source = "cveUnidad"),
-	        @Mapping(target = "porcAltoCostoVida", source = "refAltoCostoVida"),
+	        @Mapping(target = "refAltoCostoVida", source = "refAltoCostoVida"),
 	        @Mapping(target = "especialidad", source = "descAreaResponsabilidad"),
 	        @Mapping(target = "descCategoria", source = "descCategoria"),
 	        @Mapping(target = "descRegimen", source = "desRegimen"),
@@ -50,11 +50,11 @@ public interface PlazaLayoutMapper {
 	        // Créditos
 	        @Mapping(target = "creditos", expression = "java(contarCreditos(entity))"),
 
-	        @Mapping(target = "bonoDificilCobertura", source = "refBonoDificilCobertura"),
-	        @Mapping(target = "indAccesoCredito", expression = "java(entity.getIndAccesoCredito() != null && entity.getIndAccesoCredito().equals(1))"),
-	        @Mapping(target = "creditoHipotecario", source = "refCredHipotecarioImporte"),
+	        @Mapping(target = "refBonoDificilCobertura", source = "refBonoDificilCobertura"),
+	        @Mapping(target = "indAccesoCredito", source = "indAccesoCredito"),
+	        @Mapping(target = "refCredHipotecarioImporte", source = "refCredHipotecarioImporte"),
 	        @Mapping(target = "descuentoQuincenalCreditoHipotecario", source = "refCredHipotecarioQuincenal"),
-	        @Mapping(target = "creditoAutomotriz", source = "refCredAutomotrizImporte"),
+	        @Mapping(target = "refCredAutomotrizImporte", source = "refCredAutomotrizImporte"),
 	        @Mapping(target = "descuentoQuincenalCreditoAutomotriz", source = "refCredAutomotrizQuincenal"),
 
 	        @Mapping(target = "idEstatusPlaza", source = "estatusPlaza.idEstatusPlaza"),

@@ -41,7 +41,7 @@ public class AdministracionPlazaController {
 
 	private final AdministracionPlazasService administracionPlazasService;
 
-    @Operation(summary = "Busqueda de plazas por filtro", description = "Busqueda paginada de plazas del layout, filtrando de forma dinamica por clave de OOAD y/o numero de plaza; ambos filtros son opcionales.")
+    @Operation(summary = "Busqueda de plazas por filtro", description = "Busqueda paginada de plazas del layout, filtrando de forma dinamica por clave de OOAD, numero de plaza y/o convocatoria; todos los filtros son opcionales. Si no se envia idConvocatoria, se utiliza la convocatoria vigente en el periodo actual.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busqueda realizada correctamente") })
     @GetMapping("/busquedaPlazasFiltro")
@@ -49,8 +49,9 @@ public class AdministracionPlazaController {
             @Parameter(description = "Clave de OOAD (opcional)") @RequestParam(required = false) Long cveOoad,
             @Parameter(description = "Numero de plaza (opcional)") @RequestParam(required = false) Integer numPlaza,
             @Parameter(description = "Origen de plaza (opcional): MANUAL o LAYOUT") @RequestParam(required = false) String origenPlaza,
+            @Parameter(description = "Id de convocatoria (opcional). Si no se envia, se calcula la convocatoria actual") @RequestParam(required = false) Long idConvocatoria,
             @PageableDefault(size = 10, direction = Direction.ASC) final Pageable pageable) {
-        return ResponseEntity.ok(administracionPlazasService.busquedaPlazasFiltro(cveOoad, numPlaza, origenPlaza, pageable));
+        return ResponseEntity.ok(administracionPlazasService.busquedaPlazasFiltro(cveOoad, numPlaza, origenPlaza, idConvocatoria, pageable));
     }
 
     @Operation(summary = "Busqueda de detalle de plaza por id", description = "Obtiene el detalle de una plaza del layout a partir de su identificador (idPlaza).")
@@ -98,7 +99,7 @@ public class AdministracionPlazaController {
         return ResponseEntity.ok(administracionPlazasService.eliminarPlaza(idPlaza, token));
     }
 
-    @Operation(summary = "Actualización de estatus de plaza", description = "Actualiza el estatus de una plaza del layout a partir de su identificador usando metodo PATCH.")
+    @Operation(summary = "Actualización de estatus de plaza", description = "Actualiza el estatus de una plaza del layout a partir de su identificador")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Actualización realizada correctamente"),
             @ApiResponse(responseCode = "500", description = "No se encontró la plaza con el id proporcionado") })

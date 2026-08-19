@@ -15,7 +15,7 @@ public class DetallePlazaDTO {
     private String cveOoad;
     private String cvePuesto;
     private String cveUnidad;
-    private BigDecimal porcAltoCostoVida;
+    private BigDecimal refAltoCostoVida;
     private String especialidad;
     private String descCategoria;
     private String descRegimen;
@@ -34,13 +34,13 @@ public class DetallePlazaDTO {
     private String clasificacion;
     private String descOoad;
     private Integer creditos;
-    private BigDecimal bonoDificilCobertura; // Mapeado de REF_BONO_OFICIAL_COBERTURA
+    private BigDecimal refBonoDificilCobertura; // Mapeado de REF_BONO_OFICIAL_COBERTURA
 
     // --- Campos de Crédito (derivados de las relaciones) ---
-    private boolean indAccesoCredito;
-    private BigDecimal creditoAutomotriz;
+    private Integer indAccesoCredito;
+    private BigDecimal refCredAutomotrizImporte;
     private BigDecimal descuentoQuincenalCreditoAutomotriz;
-    private BigDecimal creditoHipotecario;
+    private BigDecimal refCredHipotecarioImporte;
     private BigDecimal descuentoQuincenalCreditoHipotecario;
 
     private Boolean esFavorita;

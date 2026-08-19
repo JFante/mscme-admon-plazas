@@ -46,9 +46,13 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	private final ConvocatoriaRepository convocatoriaRepository;
 
 	@Override
-	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,String origenPlaza, Pageable pageable) {
+	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,String origenPlaza, Long idConvocatoria, Pageable pageable) {
+		Long idConvocatoriaFiltro = idConvocatoria != null ? idConvocatoria
+				: convocatoriaRepository.findConvocatoriaActivaPorPeriodoActual()
+						.map(Convocatoria::getIdConvocatoria)
+						.orElseThrow(() -> new IllegalStateException(Mensajes.MSG_CONVOCATORIA_NO_ENCONTRADA.getMensaje()));
 		Page<DetallePlazaDTO> resultado = plazaLayoutRepository
-				.findAll(plazaLayoutSpecification.generarSpecificationCveOoadNumPlazaOrigen(cveOoad, numPlaza, origenPlaza, null),pageable)
+				.findAll(plazaLayoutSpecification.busquedaPlazasFiltro(cveOoad, numPlaza, origenPlaza, idConvocatoriaFiltro),pageable)
 				.map(plazaLayoutMapper::toDetallePlazaDTO);
 		return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), resultado);
 	}
