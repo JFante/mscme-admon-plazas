@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlazaLayoutCargaDTO {
 
+    private Long idPlaza;
     private Long idConvocatoria;
     private Integer numPlaza;
-    private Long cveOoad;
+    private String cveOoad;
     private String descOoad;
     private Integer cveZona;
     private String descZona;

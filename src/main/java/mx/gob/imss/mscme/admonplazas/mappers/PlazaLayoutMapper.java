@@ -65,6 +65,9 @@ public interface PlazaLayoutMapper {
 	    })
 	    DetallePlazaDTO toDetallePlazaDTO(PlazaLayout entity);
 
+	    @Mappings({
+	        @Mapping(target = "cveOoad", expression = "java(formatIntegerToTwoDigits(entity.getCveOoad()))")
+	    })
 	    PlazaLayoutCargaDTO toPlazaLayoutCargaDTO(PlazaLayout entity);
 
 	    List<PlazaLayoutCargaDTO> toPlazaLayoutCargaDTOList(List<PlazaLayout> entities);
