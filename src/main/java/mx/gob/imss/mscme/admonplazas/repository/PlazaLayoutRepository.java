@@ -22,6 +22,14 @@ public interface PlazaLayoutRepository extends JpaRepository<PlazaLayout, Long>,
 	Optional<PlazaLayout> findByIdPlazaAndIndActivo(Long idPlaza, Long indActivo);
 
 	@Query("""
+			SELECT COALESCE(MAX(pl.numPlaza), 0)
+			FROM PlazaLayout pl
+			WHERE pl.idConvocatoria = :idConvocatoria
+			AND pl.indActivo = 1
+			""")
+	Integer obtenerMaximoNumPlazaActivoPorConvocatoria(@Param("idConvocatoria") Long idConvocatoria);
+
+	@Query("""
 			SELECT CASE WHEN COUNT(pl) > 0 THEN TRUE ELSE FALSE END
 			FROM PlazaLayout pl
 			WHERE pl.idConvocatoria = :idConvocatoria

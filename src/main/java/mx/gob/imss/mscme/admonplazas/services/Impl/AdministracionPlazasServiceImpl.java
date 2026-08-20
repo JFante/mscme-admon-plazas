@@ -76,6 +76,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 
 		Convocatoria convocatoriaActiva = convocatoriaRepository.findConvocatoriaActivaPorPeriodoActual().orElseThrow(() -> new IllegalStateException("No existe una convocatoria activa vigente."));
 		Long idConvocatoria = convocatoriaActiva.getIdConvocatoria();
+		asignarNumPlazaConsecutivoSiNoFueInformado(plazaRequest, idConvocatoria);
 
 		if (plazaLayoutRepository.existsByIdConvocatoriaAndCveOoadAndNumPlazaAndIndActivo(idConvocatoria,
 				plazaRequest.getCveOoad(), plazaRequest.getNumPlaza(), Constantes.ESTADO_ACTIVO)) {
@@ -184,8 +185,15 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		if (plazaRequest == null) {
 			throw new IllegalArgumentException("La información de la plaza es obligatoria.");
 		}
-		if (plazaRequest.getCveOoad() == null || plazaRequest.getNumPlaza() == null || plazaRequest.getIdEstatusPlaza() == null) {
-			throw new IllegalArgumentException("cveOoad, numPlaza e idEstatusPlaza son obligatorios.");
+		if (plazaRequest.getCveOoad() == null || plazaRequest.getIdEstatusPlaza() == null) {
+			throw new IllegalArgumentException("cveOoad e idEstatusPlaza son obligatorios.");
+		}
+	}
+
+	private void asignarNumPlazaConsecutivoSiNoFueInformado(PlazaRequest plazaRequest, Long idConvocatoria) {
+		if (plazaRequest.getNumPlaza() == null) {
+			Integer maximoNumPlaza = plazaLayoutRepository.obtenerMaximoNumPlazaActivoPorConvocatoria(idConvocatoria);
+			plazaRequest.setNumPlaza(maximoNumPlaza + 1);
 		}
 	}
 
