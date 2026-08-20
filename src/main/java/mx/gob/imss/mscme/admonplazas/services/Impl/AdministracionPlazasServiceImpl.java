@@ -17,6 +17,7 @@ import mx.gob.imss.mscme.admonplazas.models.entities.EstatusPlaza;
 import mx.gob.imss.mscme.admonplazas.models.entities.PlazaLayout;
 import mx.gob.imss.mscme.admonplazas.models.entities.Usuario;
 import mx.gob.imss.mscme.admonplazas.models.request.PlazaRequest;
+import mx.gob.imss.mscme.admonplazas.models.request.PlazasFiltroRequest;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaValidacionResponse;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
@@ -46,13 +47,14 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	private final ConvocatoriaRepository convocatoriaRepository;
 
 	@Override
-	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(Long cveOoad, Integer numPlaza,String origenPlaza, Long idConvocatoria, Pageable pageable) {
-		Long idConvocatoriaFiltro = idConvocatoria != null ? idConvocatoria
+	public RespuestaGenerica<Page<DetallePlazaDTO>> busquedaPlazasFiltro(PlazasFiltroRequest filtro, Pageable pageable) {
+		Long idConvocatoriaFiltro = filtro.getIdConvocatoria() != null ? filtro.getIdConvocatoria()
 				: convocatoriaRepository.findConvocatoriaActivaPorPeriodoActual()
 						.map(Convocatoria::getIdConvocatoria)
 						.orElseThrow(() -> new IllegalStateException(Mensajes.MSG_CONVOCATORIA_NO_ENCONTRADA.getMensaje()));
+		filtro.setIdConvocatoria(idConvocatoriaFiltro);
 		Page<DetallePlazaDTO> resultado = plazaLayoutRepository
-				.findAll(plazaLayoutSpecification.busquedaPlazasFiltro(cveOoad, numPlaza, origenPlaza, idConvocatoriaFiltro),pageable)
+				.findAll(plazaLayoutSpecification.busquedaPlazasFiltro(filtro), pageable)
 				.map(plazaLayoutMapper::toDetallePlazaDTO);
 		return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), resultado);
 	}

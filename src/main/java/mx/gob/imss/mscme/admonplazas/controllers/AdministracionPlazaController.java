@@ -24,8 +24,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springdoc.core.annotations.ParameterObject;
 import mx.gob.imss.mscme.admonplazas.models.request.ActualizarEstatusPlazaRequest;
 import mx.gob.imss.mscme.admonplazas.models.request.PlazaRequest;
+import mx.gob.imss.mscme.admonplazas.models.request.PlazasFiltroRequest;
 import mx.gob.imss.mscme.admonplazas.models.response.DetallePlazaDTO;
 import mx.gob.imss.mscme.admonplazas.models.response.PlazaValidacionResponse;
 import mx.gob.imss.mscme.admonplazas.models.response.RespuestaGenerica;
@@ -41,17 +43,14 @@ public class AdministracionPlazaController {
 
 	private final AdministracionPlazasService administracionPlazasService;
 
-    @Operation(summary = "Busqueda de plazas por filtro", description = "Busqueda paginada de plazas del layout, filtrando de forma dinamica por clave de OOAD, numero de plaza y/o convocatoria; todos los filtros son opcionales. Si no se envia idConvocatoria, se utiliza la convocatoria vigente en el periodo actual.")
+    @Operation(summary = "Busqueda de plazas por filtro", description = "Busqueda paginada de plazas del layout, filtrando de forma dinamica por clave de OOAD, numero de plaza, clave de zona, clave de categoria, clave de especialidad, clave de unidad y/o convocatoria; todos los filtros son opcionales. Si no se envia idConvocatoria, se utiliza la convocatoria vigente en el periodo actual.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busqueda realizada correctamente") })
     @GetMapping("/busquedaPlazasFiltro")
     public ResponseEntity<RespuestaGenerica<Page<DetallePlazaDTO>>> busquedaPlazasFiltro(
-            @Parameter(description = "Clave de OOAD (opcional)") @RequestParam(required = false) Long cveOoad,
-            @Parameter(description = "Numero de plaza (opcional)") @RequestParam(required = false) Integer numPlaza,
-            @Parameter(description = "Origen de plaza (opcional): MANUAL o LAYOUT") @RequestParam(required = false) String origenPlaza,
-            @Parameter(description = "Id de convocatoria (opcional). Si no se envia, se calcula la convocatoria actual") @RequestParam(required = false) Long idConvocatoria,
+            @ParameterObject PlazasFiltroRequest filtro,
             @PageableDefault(size = 10, direction = Direction.ASC) final Pageable pageable) {
-        return ResponseEntity.ok(administracionPlazasService.busquedaPlazasFiltro(cveOoad, numPlaza, origenPlaza, idConvocatoria, pageable));
+        return ResponseEntity.ok(administracionPlazasService.busquedaPlazasFiltro(filtro, pageable));
     }
 
     @Operation(summary = "Busqueda de detalle de plaza por id", description = "Obtiene el detalle de una plaza del layout a partir de su identificador (idPlaza).")

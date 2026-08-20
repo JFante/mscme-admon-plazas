@@ -43,6 +43,7 @@ public interface PlazaLayoutRepository extends JpaRepository<PlazaLayout, Long>,
 	@Query(value = """
 			DELETE FROM CMEC_PLAZA_LAYOUT
 			WHERE ID_CONVOCATORIA = :idConvocatoria
+			AND IND_ACTIVO = 1
 			""", nativeQuery = true)
 	void borrarFisicamentePlazasPorConvocatoria(@Param("idConvocatoria") Long idConvocatoria);
 
