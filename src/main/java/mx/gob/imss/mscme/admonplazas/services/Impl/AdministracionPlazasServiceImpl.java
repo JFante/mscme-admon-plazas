@@ -61,7 +61,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 
 	@Override
 	public RespuestaGenerica<DetallePlazaDTO> buscarDetallePlaza(Long idPlaza) {
-		DetallePlazaDTO detalle = plazaLayoutRepository.findById(idPlaza)
+		DetallePlazaDTO detalle = buscarPlazaActiva(idPlaza)
 				.map(plazaLayoutMapper::toDetallePlazaDTO)
 				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 		return new RespuestaGenerica<>(true, Mensajes.MSG_EXITO.getMensaje(), detalle);
@@ -105,7 +105,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		if (idPlaza == null) {
 			throw new IllegalArgumentException("El idPlaza es requerido.");
 		}
-		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
+		PlazaLayout plazaLayout = buscarPlazaActiva(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 
 		if (plazaRequest.getIdEstatusPlaza() != null) {
 			validarEstatusAlta(plazaRequest.getIdEstatusPlaza());
@@ -124,7 +124,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	@Transactional
 	public RespuestaGenerica<Void> eliminarPlaza(Long idPlaza, String token) {
 		log.info("eliminarPlaza {}", idPlaza);
-		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
+		PlazaLayout plazaLayout = buscarPlazaActiva(idPlaza).orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 		Usuario usuarioAdmon = usuarioService.obtenerUsuarioToken(token);
 		plazaLayout.setIndActivo(Constantes.ESTADO_NO_ACTIVO);
 		plazaLayout.setIdUsuarioBaja(usuarioAdmon.getIdUsuario());
@@ -138,7 +138,7 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 	public RespuestaGenerica<Void> actualizarEstatusPlaza(Long idPlaza, Long idEstatus, String desObservaciones, String token) {
 		validarObservacionesCambioEstatus(desObservaciones);
 
-		PlazaLayout plazaLayout = plazaLayoutRepository.findById(idPlaza)
+		PlazaLayout plazaLayout = buscarPlazaActiva(idPlaza)
 				.orElseThrow(() -> new IllegalStateException("No se encontró la plaza con id " + idPlaza));
 		Long idEstatusAnterior = plazaLayout.getEstatusPlaza() != null
 				? plazaLayout.getEstatusPlaza().getIdEstatusPlaza()
@@ -187,6 +187,10 @@ public class AdministracionPlazasServiceImpl implements AdministracionPlazasServ
 		if (plazaRequest.getCveOoad() == null || plazaRequest.getNumPlaza() == null || plazaRequest.getIdEstatusPlaza() == null) {
 			throw new IllegalArgumentException("cveOoad, numPlaza e idEstatusPlaza son obligatorios.");
 		}
+	}
+
+	private java.util.Optional<PlazaLayout> buscarPlazaActiva(Long idPlaza) {
+		return plazaLayoutRepository.findByIdPlazaAndIndActivo(idPlaza, Constantes.ESTADO_ACTIVO);
 	}
 
 	private void validarEstatusAlta(Long idEstatusPlaza) {

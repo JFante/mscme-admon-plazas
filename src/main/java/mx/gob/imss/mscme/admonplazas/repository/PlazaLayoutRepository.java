@@ -1,5 +1,7 @@
 package mx.gob.imss.mscme.admonplazas.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,6 +18,8 @@ public interface PlazaLayoutRepository extends JpaRepository<PlazaLayout, Long>,
 
 	boolean existsByIdConvocatoriaAndCveOoadAndNumPlazaAndIndActivo(Long idConvocatoria, Long cveOoad,
 			Integer numPlaza, Long indActivo);
+
+	Optional<PlazaLayout> findByIdPlazaAndIndActivo(Long idPlaza, Long indActivo);
 
 	@Query("""
 			SELECT CASE WHEN COUNT(pl) > 0 THEN TRUE ELSE FALSE END
